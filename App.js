@@ -1,34 +1,65 @@
+import react, { useState } from 'react';
 import {
   StyleSheet,
   Text,
   View,
   TextInput,
   KeyboardAvoidingView,
-  TouchableOpacity } from 'react-native';
+  TouchableOpacity,
+  Keyboard,
+  ScrollView } from 'react-native';
 import Task from './components/Task';
 
 export default function App() {
+
+  const[task, setTask] = useState();
+  const[taskItems, setTaskItems] = useState([]);
+
+  const handleAddTask = () => {
+    Keyboard.dismiss();
+    setTaskItems([...taskItems, task]);
+    setTask(null);
+  };
+
+  const completeTask = (index) => {
+    let itemsCopy = [...taskItems];
+    itemsCopy.splice(index, 1);
+    setTaskItems(itemsCopy);
+  };
   return (
     <View style={styles.container}>
 
       {/* Today's tasks */}
-      <View style={styles.tasksWrapper}>
-        <Text style={styles.sectionTitle}>Today's task</Text>
+      <ScrollView>
+        <View style={styles.tasksWrapper}>
+          <Text style={styles.sectionTitle}>Today's task</Text>
 
-        <View style={styles.items}>
-          {/* This's where the tasks will go*/}
-          <Task text={"hello"} />
-          <Task text={"hello"} />
-          <Task text={"hello"} />
+          <View style={styles.items}>
+            {/* This's where the tasks will go*/}
+            {
+              taskItems.map((item, index) => {
+                return (
+                  <TouchableOpacity key={index} onPress={() => completeTask()}>
+                    <Task text={item}/>
+                  </TouchableOpacity>
+                )
+              })
+            }
+          </View>
         </View>
-      </View>
+      </ScrollView>
       {/* Write a task */}
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.writeTaskWrapper}
       >
-        <TextInput style={styles.input} placeholder={'Write a task'} />
-        <TouchableOpacity>
+        <TextInput
+          style={styles.input}
+          placeholder={'Write a task'}
+          value={task}
+          onChangeText={text => setTask(text)}
+          />
+        <TouchableOpacity onPress={() => handleAddTask()}>
           <View style={styles.addWrapper}>
             <Text style={styles.addText}>+</Text>
           </View>
@@ -42,7 +73,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFEDCB',
+    backgroundColor: '#D4E1D2',
   },
   tasksWrapper: {
     paddingTop: 80,
@@ -68,7 +99,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: '#FFF',
     borderRadius: 60,
-    borderColor: '#022AFF',
+    borderColor: '#70C3FF',
     borderWidth: 1,
     width: 250,
   },
@@ -79,10 +110,7 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: '#022AFF',
+    borderColor: '#70C3FF',
     borderWidth: 1,
-  },
-  addText: {
-
-  },
+  }
 });
